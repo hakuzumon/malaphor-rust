@@ -27,7 +27,7 @@ impl SentencePart {
 
 impl fmt::Display for SentencePart {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.part)
+        f.write_str(&self.part)
     }
 }
 
@@ -132,7 +132,7 @@ impl Malaphor {
     }
 
     fn combine(&self, begin: &Sentence, end: &Sentence) -> String {
-        itertools::join(&[begin.parts[0].part.as_str(), end.parts[1].part.as_str()], ", ")
+        format!("{}, {}", begin.parts[0].part, end.parts[1].part)
     }
 
     pub fn generate(&self) -> String {
