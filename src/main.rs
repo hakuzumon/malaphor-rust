@@ -5,5 +5,5 @@ fn main() {
 
     let result = malaphor.generate();
 
-    println!("random malaphor: {}", result);
+    println!("\nrandom malaphor: {}", result);
 }
