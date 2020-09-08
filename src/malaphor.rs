@@ -40,9 +40,9 @@ impl Sentence {
     fn parse(line: &str) -> Sentence {
         Sentence {
             parts: line.split(", ")
-            .enumerate()
-            .map(|(i, s)| SentencePart::parse(s, i))
-            .collect()
+                .enumerate()
+                .map(|(i, s)| SentencePart::parse(s, i))
+                .collect()
         }
     }
 }
