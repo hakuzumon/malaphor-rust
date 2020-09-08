@@ -1,4 +1,4 @@
-use std::{fmt, fs};
+use std::fmt;
 use std::collections::HashMap;
 use std::fmt::Formatter;
 
@@ -58,18 +58,16 @@ pub struct Malaphor {
 }
 
 impl Malaphor {
-    pub fn new(file_path: &str) -> Malaphor {
+    pub fn new(file_contents: &str) -> Malaphor {
         Malaphor {
-            data: Malaphor::load_aphorisms(file_path)
+            data: Malaphor::load_aphorisms(file_contents)
         }
     }
 
-    fn load_aphorisms(file_path: &str) -> Vec<Sentence> {
-        let file = fs::read_to_string(file_path).unwrap();
-
+    fn load_aphorisms(file_contents: &str) -> Vec<Sentence> {
         let mut sentences_by_connecting_word: HashMap<String, Vec<Sentence>> = HashMap::new();
 
-        let sentences: Vec<Sentence> = file.lines().map(Sentence::parse).collect();
+        let sentences: Vec<Sentence> = file_contents.lines().map(Sentence::parse).collect();
 
         sentences.into_iter()
             .filter(|t| t.parts.len() == 2)
