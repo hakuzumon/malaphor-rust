@@ -50,8 +50,7 @@ impl Sentence {
 
 impl fmt::Display for Sentence {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        let parts: Vec<String> = self.parts.iter().map(|x| x.part.to_string()).collect();
-        write!(f, "{}", parts.join(", "))
+        write!(f, "{}", itertools::join(self.parts.iter(), ", "))
     }
 }
 
