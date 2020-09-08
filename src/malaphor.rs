@@ -68,7 +68,7 @@ impl Malaphor {
     fn load_aphorisms(file_contents: &str) -> Vec<Sentence> {
         let mut sentences_by_connecting_word: HashMap<String, Vec<Sentence>> = HashMap::new();
 
-        let sentences: Vec<Sentence> = file_contents.lines().map(Sentence::parse).collect();
+        let sentences: Vec<_> = file_contents.lines().map(Sentence::parse).collect();
 
         sentences
             .into_iter()
