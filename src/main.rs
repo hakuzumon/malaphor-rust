@@ -1,7 +1,7 @@
 mod malaphor;
 
 fn main() {
-    let malaphor = malaphor::Malaphor::init("./src/sentences.txt");
+    let malaphor = malaphor::Malaphor::new("./src/sentences.txt");
 
     let result = malaphor.generate();
 

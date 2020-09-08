@@ -5,8 +5,7 @@ use std::fmt::Formatter;
 use rand::distributions::Uniform;
 use rand::prelude::*;
 
-#[derive(PartialEq)]
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 struct SentencePart {
     first_word_lowercase: String,
     part_index: usize,
@@ -38,8 +37,7 @@ impl fmt::Display for SentencePart {
     }
 }
 
-#[derive(PartialEq)]
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Sentence {
     parts: Vec<SentencePart>
 }
@@ -71,7 +69,7 @@ pub struct Malaphor {
 }
 
 impl Malaphor {
-    pub fn init(file_path: &str) -> Malaphor {
+    pub fn new(file_path: &str) -> Malaphor {
         let data = Malaphor::load_aphorisms(file_path);
         let rng = thread_rng();
 
