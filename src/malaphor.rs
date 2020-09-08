@@ -69,7 +69,7 @@ impl Malaphor {
 
         let mut sentences_by_connecting_word: HashMap<String, Vec<Sentence>> = HashMap::new();
 
-        let sentences: Vec<Sentence> = file.split("\n").map(Sentence::parse).collect();
+        let sentences: Vec<Sentence> = file.lines().map(Sentence::parse).collect();
 
         sentences.into_iter()
             .filter(|t| t.parts.len() == 2)
