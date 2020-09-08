@@ -2,7 +2,6 @@ use std::{fmt, fs};
 use std::collections::HashMap;
 use std::fmt::Formatter;
 
-use rand::distributions::Uniform;
 use rand::prelude::*;
 
 #[derive(Debug, PartialEq)]
@@ -55,19 +54,13 @@ impl fmt::Display for Sentence {
 }
 
 pub struct Malaphor {
-    data: Vec<Sentence>,
-
-    rng: ThreadRng,
+    data: Vec<Sentence>
 }
 
 impl Malaphor {
     pub fn new(file_path: &str) -> Malaphor {
-        let data = Malaphor::load_aphorisms(file_path);
-        let rng = thread_rng();
-
         Malaphor {
-            data,
-            rng,
+            data: Malaphor::load_aphorisms(file_path)
         }
     }
 
@@ -94,26 +87,11 @@ impl Malaphor {
             .collect()
     }
 
-    pub fn random_sentence(&self) -> &Sentence {
-        let choices = &self.data;
-        let mut rng = self.rng;
-        let sample_index = rng.sample(Uniform::new(0, choices.len()));
-        &choices[sample_index]
-    }
-
-    pub fn random<'a>(&self, choices: &Vec<&'a Sentence>) -> &'a Sentence {
-        let mut rng = self.rng;
-        let sample_index = rng.sample(Uniform::new(0, choices.len()));
-        choices[sample_index]
-    }
-
     pub fn find_matches(&self, sentence: &Sentence) -> Vec<&Sentence> {
         let good_matches = self.find_good_matches(sentence);
-        let bad_match_percentage = self.get_bad_match_percentage(good_matches.len());
-        let mut rng = self.rng;
-        let d100 = rng.sample(Uniform::new(0, 100));
+        let bad_match_probability = self.get_bad_match_probability(good_matches.len());
 
-        if d100 <= bad_match_percentage {
+        if thread_rng().gen_bool(bad_match_probability) {
             self.find_bad_matches(sentence)
         } else {
             good_matches
@@ -133,8 +111,8 @@ impl Malaphor {
             .collect()
     }
 
-    fn get_bad_match_percentage(&self, option_count: usize) -> u8 {
-        match option_count {
+    fn get_bad_match_probability(&self, option_count: usize) -> f64 {
+        (match option_count {
             1 => 95,
             2 => 90,
             3 => 80,
@@ -142,12 +120,11 @@ impl Malaphor {
             7 | 8 | 9 => 60,
             10 | 11 | 12 | 13 | 14 => 30,
             _ => 15
-        }
+        } as f64) / 100.0
     }
 
     fn combine_in_any_order(&self, s1: &Sentence, s2: &Sentence) -> String {
-        let mut rng = self.rng;
-        if rng.gen_bool(0.5) {
+        if thread_rng().gen() {
             self.combine(s1, s2)
         } else {
             self.combine(s2, s1)
@@ -159,11 +136,11 @@ impl Malaphor {
     }
 
     pub fn generate(&self) -> String {
-        let s1 = self.random_sentence();
-        let matches = self.find_matches(&s1);
-        let s2 = self.random(&matches);
+        let rng = &mut thread_rng();
+        let s1 = self.data.choose(rng).unwrap();
+        let matches = self.find_matches(s1);
+        let s2 = *matches.choose(rng).unwrap();
 
         self.combine_in_any_order(s1, s2)
     }
 }
-
