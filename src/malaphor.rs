@@ -76,7 +76,7 @@ impl Malaphor {
             .for_each(|sentence| {
                 let key = sentence.parts[1].first_word_lowercase.to_string();
                 sentences_by_connecting_word.entry(key)
-                    .or_insert(Vec::new())
+                    .or_insert_with(Vec::new)
                     .push(sentence);
             });
 
@@ -100,14 +100,14 @@ impl Malaphor {
 
     fn find_good_matches(&self, sentence: &Sentence) -> Vec<&Sentence> {
         self.data.iter()
-            .filter(|s| s != &sentence &&
+            .filter(|&s| s != sentence &&
                 s.parts[1].first_word_lowercase == sentence.parts[1].first_word_lowercase)
             .collect()
     }
 
     fn find_bad_matches(&self, sentence: &Sentence) -> Vec<&Sentence> {
         self.data.iter()
-            .filter(|s| s != &sentence)
+            .filter(|&s| s != sentence)
             .collect()
     }
 
@@ -132,7 +132,7 @@ impl Malaphor {
     }
 
     fn combine(&self, begin: &Sentence, end: &Sentence) -> String {
-        begin.parts[0].part.to_string() + ", " + end.parts[1].part.to_string().as_str()
+        itertools::join(&[begin.parts[0].part.as_str(), end.parts[1].part.as_str()], ", ")
     }
 
     pub fn generate(&self) -> String {
