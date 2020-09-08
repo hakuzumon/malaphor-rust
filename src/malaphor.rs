@@ -1,5 +1,5 @@
-use std::fmt;
 use std::collections::HashMap;
+use std::fmt;
 use std::fmt::Formatter;
 
 use rand::prelude::*;
@@ -33,16 +33,17 @@ impl fmt::Display for SentencePart {
 
 #[derive(Debug, PartialEq)]
 pub struct Sentence {
-    parts: Vec<SentencePart>
+    parts: Vec<SentencePart>,
 }
 
 impl Sentence {
     fn parse(line: &str) -> Sentence {
         Sentence {
-            parts: line.split(", ")
+            parts: line
+                .split(", ")
                 .enumerate()
                 .map(|(i, s)| SentencePart::parse(s, i))
-                .collect()
+                .collect(),
         }
     }
 }
@@ -54,13 +55,13 @@ impl fmt::Display for Sentence {
 }
 
 pub struct Malaphor {
-    data: Vec<Sentence>
+    data: Vec<Sentence>,
 }
 
 impl Malaphor {
     pub fn new(file_contents: &str) -> Malaphor {
         Malaphor {
-            data: Malaphor::load_aphorisms(file_contents)
+            data: Malaphor::load_aphorisms(file_contents),
         }
     }
 
@@ -69,16 +70,19 @@ impl Malaphor {
 
         let sentences: Vec<Sentence> = file_contents.lines().map(Sentence::parse).collect();
 
-        sentences.into_iter()
+        sentences
+            .into_iter()
             .filter(|t| t.parts.len() == 2)
             .for_each(|sentence| {
                 let key = sentence.parts[1].first_word_lowercase.to_string();
-                sentences_by_connecting_word.entry(key)
+                sentences_by_connecting_word
+                    .entry(key)
                     .or_insert_with(Vec::new)
                     .push(sentence);
             });
 
-        sentences_by_connecting_word.into_iter()
+        sentences_by_connecting_word
+            .into_iter()
             // only take sentences which have at least one "switchable partner"
             .filter(|(_, s)| s.len() > 1)
             .flat_map(|(_, ss)| ss)
@@ -97,16 +101,17 @@ impl Malaphor {
     }
 
     fn find_good_matches(&self, sentence: &Sentence) -> Vec<&Sentence> {
-        self.data.iter()
-            .filter(|&s| s != sentence &&
-                s.parts[1].first_word_lowercase == sentence.parts[1].first_word_lowercase)
+        self.data
+            .iter()
+            .filter(|&s| {
+                s != sentence
+                    && s.parts[1].first_word_lowercase == sentence.parts[1].first_word_lowercase
+            })
             .collect()
     }
 
     fn find_bad_matches(&self, sentence: &Sentence) -> Vec<&Sentence> {
-        self.data.iter()
-            .filter(|&s| s != sentence)
-            .collect()
+        self.data.iter().filter(|&s| s != sentence).collect()
     }
 
     fn get_bad_match_probability(&self, option_count: usize) -> f64 {
@@ -117,8 +122,9 @@ impl Malaphor {
             4..=6 => 70,
             7..=9 => 60,
             10..=14 => 30,
-            _ => 15
-        } as f64) / 100.0
+            _ => 15,
+        } as f64)
+            / 100.0
     }
 
     fn combine_in_any_order(&self, s1: &Sentence, s2: &Sentence) -> String {
