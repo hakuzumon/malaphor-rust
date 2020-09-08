@@ -16,16 +16,11 @@ impl SentencePart {
     fn parse(part: &str, index: usize) -> SentencePart {
         let val = part.trim();
 
-        let first_space = val.find(' ');
-
-        let first_word = match first_space {
-            Some(i) => &val[..i],
-            None => &val[..]
-        };
+        let first_word = val.split(' ').next().unwrap_or(val);
 
         SentencePart {
-            part: val.to_string(),
-            first_word_lowercase: first_word.to_lowercase().to_string(),
+            part: val.to_owned(),
+            first_word_lowercase: first_word.to_lowercase(),
             part_index: index,
         }
     }
@@ -44,13 +39,11 @@ pub struct Sentence {
 
 impl Sentence {
     fn parse(line: &str) -> Sentence {
-        let parts: Vec<SentencePart> = line.split(", ")
+        Sentence {
+            parts: line.split(", ")
             .enumerate()
             .map(|(i, s)| SentencePart::parse(s, i))
-            .collect();
-
-        Sentence {
-            parts
+            .collect()
         }
     }
 }
